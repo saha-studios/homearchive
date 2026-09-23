@@ -35,7 +35,7 @@ const locations = [
 
 export default function EstateMap() {
   return (
-    <section className="bg-[#eef8ef] py-28 px-8">
+<section id="estate" className="bg-[#eef8ef] py-28 px-8">
       <div className="max-w-7xl mx-auto">
 
         <div className="text-center mb-16">

@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="relative h-screen overflow-hidden">
       <Image
-        src="/images/hero.jpg"
+        src="/hero.jpg"
         alt="Home Estate"
         fill
         priority
@@ -24,9 +24,12 @@ export default function Hero() {
           Preserving our home's story, one season at a time.
         </p>
 
-        <button className="rounded-full bg-white px-8 py-4 text-lg font-bold text-green-900 shadow-2xl transition hover:scale-105 sm:px-10 sm:py-5 sm:text-xl">
+        <a
+          href="#estate"
+          className="rounded-full bg-white px-8 py-4 text-lg font-bold text-green-900 shadow-2xl transition hover:scale-105 sm:px-10 sm:py-5 sm:text-xl"
+        >
           Explore the Estate →
-        </button>
+        </a>
       </div>
     </section>
   );
