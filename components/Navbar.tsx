@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { getSiteContent } from "@/lib/site-content";
+import { defaultSiteContent } from "@/lib/site-content";
 import MobileMenu from "@/components/MobileMenu";
 
-export default async function Navbar() {
-  const content = await getSiteContent();
+export default function Navbar() {
+  const content = defaultSiteContent;
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 border-b border-white/20 bg-black/30 backdrop-blur-xl">

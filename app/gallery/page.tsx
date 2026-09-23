@@ -2,13 +2,13 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
-import { getSiteContent } from "@/lib/site-content";
+import { defaultSiteContent } from "@/lib/site-content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 export default async function GalleryPage() {
-  const content = await getSiteContent();
-  const page = content.pages.gallery;
+  const page = defaultSiteContent.pages.gallery;
+
   const { data: photos, error } = await supabase
     .from("memory_photos")
     .select(`
@@ -22,43 +22,38 @@ export default async function GalleryPage() {
         location
       )
     `)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(60);
 
   return (
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-gradient-to-b from-[#031d0f] via-[#0b4f2a] to-[#1b7a45] pt-32 pb-24 px-8">
-        <div className="max-w-7xl mx-auto">
-
-          <p className="uppercase tracking-[0.3em] text-green-300 mb-4">
+      <main className="min-h-screen bg-gradient-to-b from-[#031d0f] via-[#0b4f2a] to-[#1b7a45] px-8 pb-24 pt-32">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-4 uppercase tracking-[0.3em] text-green-300">
             {page.eyebrow}
           </p>
 
-          <h1 className="text-6xl font-bold text-white mb-4">
+          <h1 className="mb-4 text-5xl font-bold text-white md:text-6xl">
             {page.title}
           </h1>
 
-          <p className="text-green-100 text-xl mb-16">
+          <p className="mb-16 text-lg text-green-100 md:text-xl">
             {page.description}
           </p>
 
           {error ? (
             <div className="rounded-3xl bg-white p-10">
-              <h2 className="text-2xl font-bold text-red-700 mb-3">
+              <h2 className="mb-3 text-2xl font-bold text-red-700">
                 Gallery couldn't load
               </h2>
 
-              <p className="text-gray-600">
-                {error.message}
-              </p>
+              <p className="text-gray-600">{error.message}</p>
             </div>
           ) : photos && photos.length > 0 ? (
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {photos.map((photo) => {
-
                 const memory = Array.isArray(photo.memories)
                   ? photo.memories[0]
                   : photo.memories;
@@ -67,33 +62,31 @@ export default async function GalleryPage() {
                   <Link
                     key={photo.id}
                     href={`/memories/${photo.memory_id}`}
-                    className="group overflow-hidden rounded-3xl bg-white shadow-2xl hover:-translate-y-2 transition-all duration-300"
+                    className="group overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 hover:-translate-y-2"
                   >
-
-                    <div className="relative h-80 overflow-hidden bg-green-100">
-
+                    <div className="relative h-72 overflow-hidden bg-green-100 md:h-80">
                       <img
                         src={photo.image_url}
                         alt={photo.caption || "Home Archive photo"}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
-
                     </div>
 
                     <div className="p-6">
-
                       {memory && (
                         <>
-                          <p className="text-green-700 font-bold">
+                          <p className="font-bold text-green-700">
                             {memory.year}
                           </p>
 
-                          <h2 className="text-2xl font-bold text-gray-900 mt-1">
+                          <h2 className="mt-1 text-2xl font-bold text-gray-900">
                             {memory.title}
                           </h2>
 
                           {memory.location && (
-                            <p className="text-gray-500 mt-2">
+                            <p className="mt-2 text-gray-500">
                               📍 {memory.location}
                             </p>
                           )}
@@ -101,50 +94,39 @@ export default async function GalleryPage() {
                       )}
 
                       {photo.caption && (
-                        <p className="text-gray-600 mt-4">
+                        <p className="mt-4 text-gray-600">
                           {photo.caption}
                         </p>
                       )}
 
-                      <p className="text-green-700 font-semibold mt-5">
+                      <p className="mt-5 font-semibold text-green-700">
                         View memory →
                       </p>
-
                     </div>
-
                   </Link>
                 );
               })}
-
             </div>
-
           ) : (
-
             <div className="rounded-3xl bg-white p-16 text-center shadow-2xl">
-
-              <div className="text-7xl mb-6">
-                📸
-              </div>
+              <div className="mb-6 text-7xl">📸</div>
 
               <h2 className="text-3xl font-bold text-gray-900">
                 The gallery is waiting.
               </h2>
 
-              <p className="text-gray-600 text-lg mt-4">
+              <p className="mt-4 text-lg text-gray-600">
                 Add some memories with photos from the Admin Dashboard.
               </p>
 
               <Link
                 href="/admin"
-                className="inline-block mt-8 rounded-xl bg-green-700 px-7 py-4 font-bold text-white hover:bg-green-800 transition"
+                className="mt-8 inline-block rounded-xl bg-green-700 px-7 py-4 font-bold text-white transition hover:bg-green-800"
               >
                 Add a Memory →
               </Link>
-
             </div>
-
           )}
-
         </div>
       </main>
 
