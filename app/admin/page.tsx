@@ -56,11 +56,12 @@ export default function AdminPage() {
       .select("*")
       .order("year", { ascending: false });
 
-    if (memoryError) {
-      console.error(memoryError);
-    } else {
-      setMemories(memoryData || []);
-    }
+   if (memoryError) {
+  console.error("MEMORIES LOAD ERROR:", memoryError);
+  setMessage(`Memory loading failed: ${memoryError.message}`);
+} else {
+  setMemories(memoryData || []);
+}
 
     const { data: photoData, error: photoError } = await supabase
       .from("memory_photos")
@@ -68,11 +69,11 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
 
     if (photoError) {
-      console.error(photoError);
-    } else {
-      setPhotos(photoData || []);
-    }
-
+  console.error("PHOTOS LOAD ERROR:", photoError);
+  setMessage(`Photo loading failed: ${photoError.message}`);
+} else {
+  setPhotos(photoData || []);
+}
     setLoadingMemories(false);
   }
 
@@ -947,7 +948,7 @@ export default function AdminPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer/>
     </>
   );
 }
